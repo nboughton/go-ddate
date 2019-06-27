@@ -7,15 +7,6 @@ import (
 	humanize "github.com/dustin/go-humanize"
 )
 
-// Season names are constant
-const (
-	CHAOS        = "Chaos"
-	DISCORD      = "Discord"
-	CONFUSION    = "Confusion"
-	BUREAUCRACY  = "Bureaucracy"
-	THEAFTERMATH = "The Aftermath"
-)
-
 // Date represents all the data relevant to a Discordian calender entry
 type Date struct {
 	Year        int
@@ -75,11 +66,11 @@ type seasonData struct {
 }
 
 var seasons = map[string]seasonData{
-	CHAOS:        {1, 73, "MungDay", "Chaoflux"},
-	DISCORD:      {74, 146, "Mojoday", "Discoflux"},
-	CONFUSION:    {147, 219, "Syaday", "Confuflux"},
-	BUREAUCRACY:  {220, 292, "Zaraday", "Bureflux"},
-	THEAFTERMATH: {293, 365, "Maladay", "Afflux"},
+	"Chaos":         {1, 73, "MungDay", "Chaoflux"},
+	"Discord":       {74, 146, "Mojoday", "Discoflux"},
+	"Confusion":     {147, 219, "Syaday", "Confuflux"},
+	"Bureaucracy":   {220, 292, "Zaraday", "Bureflux"},
+	"The Aftermath": {293, 365, "Maladay", "Afflux"},
 }
 
 var days = []string{"Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange"}
