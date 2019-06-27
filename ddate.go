@@ -7,6 +7,15 @@ import (
 	humanize "github.com/dustin/go-humanize"
 )
 
+// Season names are constant
+const (
+	CHAOS        = "Chaos"
+	DISCORD      = "Discord"
+	CONFUSION    = "Confusion"
+	BUREAUCRACY  = "Bureaucracy"
+	THEAFTERMATH = "The Aftermath"
+)
+
 // Date represents all the data relevant to a Discordian calender entry
 type Date struct {
 	Year        int
@@ -25,21 +34,30 @@ func New(d time.Time) Date {
 	yearDay := d.YearDay()
 
 	// get the day number and season
-	seasonID, dayOfSeason := "", 0
-	for season, days := range seasons {
+	season, dayOfSeason, day := "", 0, ""
+	for name, days := range seasons {
 		if yearDay >= days.first && yearDay <= days.last {
-			seasonID = season
+			season = name
 			dayOfSeason = (yearDay - days.first) + 1
 			break
 		}
 	}
 
+	switch dayOfSeason {
+	case 5:
+		day = seasons[season].apostleDay
+	case 50:
+		day = seasons[season].seasonDay
+	default:
+		day = days[dayOfSeason%5]
+	}
+
 	return Date{
 		Year:        (d.Year() - 1970) + 3136,
-		Season:      seasonID,
+		Season:      season,
 		DayOfSeason: dayOfSeason,
 		DayOfWeek:   dayOfSeason % 5,
-		Day:         days[dayOfSeason%5],
+		Day:         day,
 	}
 }
 
@@ -49,17 +67,19 @@ func Today() Date {
 }
 
 // Internals used for calculating things
-type dateRange struct {
-	first int
-	last  int
+type seasonData struct {
+	first      int
+	last       int
+	apostleDay string
+	seasonDay  string
 }
 
-var seasons = map[string]dateRange{
-	"Chaos":         {1, 73},
-	"Discord":       {74, 146},
-	"Confusion":     {147, 219},
-	"Bureaucracy":   {220, 292},
-	"The Aftermath": {293, 365},
+var seasons = map[string]seasonData{
+	CHAOS:        {1, 73, "MungDay", "Chaoflux"},
+	DISCORD:      {74, 146, "Mojoday", "Discoflux"},
+	CONFUSION:    {147, 219, "Syaday", "Confuflux"},
+	BUREAUCRACY:  {220, 292, "Zaraday", "Bureflux"},
+	THEAFTERMATH: {293, 365, "Maladay", "Afflux"},
 }
 
 var days = []string{"Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange"}
