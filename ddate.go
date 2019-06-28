@@ -7,8 +7,7 @@ import (
 	humanize "github.com/dustin/go-humanize"
 )
 
-// Date represents all the data relevant to a Discordian calender entry, note that DayOfWeek is 0 indexed (i.e
-// Sweetmorn is 0, Boomtime is 1 etc)
+// Date represents all the data relevant to a Discordian calender entry
 type Date struct {
 	Year        int
 	Season      string
