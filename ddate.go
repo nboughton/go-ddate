@@ -7,6 +7,55 @@ import (
 	humanize "github.com/dustin/go-humanize"
 )
 
+// Constants
+const (
+	stTibsDay      = "St Tib's Day"
+	ssnChaos       = "Chaos"
+	ssnDiscord     = "Discord"
+	ssnConfusion   = "Confusion"
+	ssnBureaucracy = "Bureaucracy"
+	ssnAftermath   = "The Aftermath"
+)
+
+// Internals used for calculating things
+type ssnInfo struct {
+	first      int
+	last       int
+	apostleDay string
+	seasonDay  string
+}
+
+var (
+	seasons = map[string]ssnInfo{
+		ssnChaos:       {1, 73, "MungDay", "Chaoflux"},
+		ssnDiscord:     {74, 146, "Mojoday", "Discoflux"},
+		ssnConfusion:   {147, 219, "Syaday", "Confuflux"},
+		ssnBureaucracy: {220, 292, "Zaraday", "Bureflux"},
+		ssnAftermath:   {293, 365, "Maladay", "Afflux"},
+	}
+
+	days = map[int]string{
+		1: "Sweetmorn",
+		2: "Boomtime",
+		3: "Pungenday",
+		4: "Prickle-Prickle",
+		5: "Setting Orange",
+	}
+)
+
+func isLeapYear(year int) bool {
+	switch {
+	case year%400 == 0:
+		return true
+	case year%100 == 0:
+		return false
+	case year%4 == 0:
+		return true
+	default:
+		return false
+	}
+}
+
 // Date represents all the data relevant to a Discordian calender entry
 type Date struct {
 	Year        int
@@ -16,6 +65,7 @@ type Date struct {
 	DayOfSeason int
 }
 
+// String implements the Stringer interface for Date structs
 func (d Date) String() string {
 	if d.Day == stTibsDay {
 		return fmt.Sprintf("Today is %s, YOLD %d", d.Day, d.Year)
@@ -49,6 +99,7 @@ func New(d time.Time) Date {
 		}
 	}
 
+	// Account for Holy Days
 	switch dayOfSeason {
 	case 5:
 		day = seasons[season].apostleDay
@@ -77,52 +128,4 @@ func New(d time.Time) Date {
 // Today returns Today's date in the discordian calendar
 func Today() Date {
 	return New(time.Now())
-}
-
-// Internals used for calculating things
-type seasonData struct {
-	first      int
-	last       int
-	apostleDay string
-	seasonDay  string
-}
-
-var (
-	seasons = map[string]seasonData{
-		ssnChaos:       {1, 73, "MungDay", "Chaoflux"},
-		ssnDiscord:     {74, 146, "Mojoday", "Discoflux"},
-		ssnConfusion:   {147, 219, "Syaday", "Confuflux"},
-		ssnBureaucracy: {220, 292, "Zaraday", "Bureflux"},
-		ssnAftermath:   {293, 365, "Maladay", "Afflux"},
-	}
-	days = map[int]string{
-		1: "Sweetmorn",
-		2: "Boomtime",
-		3: "Pungenday",
-		4: "Prickle-Prickle",
-		5: "Setting Orange",
-	}
-)
-
-// Constant names
-const (
-	stTibsDay      = "St Tib's Day"
-	ssnChaos       = "Chaos"
-	ssnDiscord     = "Discord"
-	ssnConfusion   = "Confusion"
-	ssnBureaucracy = "Bureaucracy"
-	ssnAftermath   = "The Aftermath"
-)
-
-func isLeapYear(year int) bool {
-	switch {
-	case year%400 == 0:
-		return true
-	case year%100 == 0:
-		return false
-	case year%4 == 0:
-		return true
-	default:
-		return false
-	}
 }
