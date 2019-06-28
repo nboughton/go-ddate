@@ -24,11 +24,11 @@ func (d Date) String() string {
 	return fmt.Sprintf("Today is %s, %s day of %s in the YOLD %d", d.Day, humanize.Ordinal(d.DayOfSeason), d.Season, d.Year)
 }
 
-// New generates a Date from d
+// New generates a discordian Date from d
 func New(d time.Time) Date {
 	yearDay := d.YearDay()
 
-	// There's an extra day added between 58th and 59th of Chaos
+	// There's an extra day added between 59th and 60th of Chaos on Leap years
 	if isLeapYear(d.Year()) && yearDay >= 60 {
 		yearDay--
 	}
@@ -58,7 +58,7 @@ func New(d time.Time) Date {
 		day = days[dayOfWeek]
 	}
 
-	// Implement St Tibbs Day on Feb 29th
+	// it's St Tibbs Day on Feb 29th
 	if d.Month() == 2 && d.Day() == 29 {
 		day = stTibsDay
 		dayOfSeason = 0
