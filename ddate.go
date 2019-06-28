@@ -24,6 +24,11 @@ func (d Date) String() string {
 func New(d time.Time) Date {
 	yearDay := d.YearDay()
 
+	// There's an extra day added between 58th and 59th of Chaos
+	if isLeapYear(d.Year()) && yearDay > 58 {
+		yearDay--
+	}
+
 	// get the day number and season
 	season, dayOfSeason, day := "", 0, ""
 	for name, days := range seasons {
@@ -41,6 +46,11 @@ func New(d time.Time) Date {
 		day = seasons[season].seasonDay
 	default:
 		day = days[dayOfSeason%5]
+	}
+
+	// Implement St Tibbs Day on Feb 29th
+	if d.Month() == 2 && d.Day() == 29 {
+		day = "St Tib's Day"
 	}
 
 	return Date{
@@ -74,3 +84,16 @@ var seasons = map[string]seasonData{
 }
 
 var days = []string{"Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange"}
+
+func isLeapYear(year int) bool {
+	switch {
+	case year%400 == 0:
+		return true
+	case year%100 == 0:
+		return false
+	case year%4 == 0:
+		return true
+	default:
+		return false
+	}
+}
