@@ -68,10 +68,10 @@ type Date struct {
 // String implements the Stringer interface for Date structs
 func (d Date) String() string {
 	if d.Day == stTibsDay {
-		return fmt.Sprintf("Today is %s, YOLD %d", d.Day, d.Year)
+		return fmt.Sprintf("%s, YOLD %d", d.Day, d.Year)
 	}
 
-	return fmt.Sprintf("Today is %s, %s day of %s in the YOLD %d", d.Day, humanize.Ordinal(d.DayOfSeason), d.Season, d.Year)
+	return fmt.Sprintf("%s, %s day of %s in the YOLD %d", d.Day, humanize.Ordinal(d.DayOfSeason), d.Season, d.Year)
 }
 
 // New generates a discordian Date from d
