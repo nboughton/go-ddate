@@ -7,7 +7,8 @@ import (
 	humanize "github.com/dustin/go-humanize"
 )
 
-// Date represents all the data relevant to a Discordian calender entry
+// Date represents all the data relevant to a Discordian calender entry, note that DayOfWeek is 0 indexed (i.e
+// Sweetmorn is 0, Boomtime is 1 etc)
 type Date struct {
 	Year        int
 	Season      string
@@ -39,7 +40,12 @@ func New(d time.Time) Date {
 		if yearDay >= days.first && yearDay <= days.last {
 			season = name
 			dayOfSeason = (yearDay - days.first) + 1
-			dayOfWeek = (dayOfSeason - 1) % 5
+
+			dayOfWeek = yearDay % 5
+			if dayOfWeek == 0 {
+				dayOfWeek = 5
+			}
+
 			break
 		}
 	}
@@ -56,6 +62,8 @@ func New(d time.Time) Date {
 	// Implement St Tibbs Day on Feb 29th
 	if d.Month() == 2 && d.Day() == 29 {
 		day = stTibsDay
+		dayOfSeason = 0
+		dayOfWeek = 0
 	}
 
 	return Date{
@@ -88,7 +96,13 @@ var (
 		ssnBureaucracy: {220, 292, "Zaraday", "Bureflux"},
 		ssnAftermath:   {293, 365, "Maladay", "Afflux"},
 	}
-	days = []string{"Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange"}
+	days = map[int]string{
+		1: "Sweetmorn",
+		2: "Boomtime",
+		3: "Pungenday",
+		4: "Prickle-Prickle",
+		5: "Setting Orange",
+	}
 )
 
 // Constant names
