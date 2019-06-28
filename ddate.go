@@ -17,6 +17,10 @@ type Date struct {
 }
 
 func (d Date) String() string {
+	if d.Day == stTibsDay {
+		return fmt.Sprintf("Today is %s, YOLD %d", d.Day, d.Year)
+	}
+
 	return fmt.Sprintf("Today is %s, %s day of %s in the YOLD %d", d.Day, humanize.Ordinal(d.DayOfSeason), d.Season, d.Year)
 }
 
@@ -25,16 +29,17 @@ func New(d time.Time) Date {
 	yearDay := d.YearDay()
 
 	// There's an extra day added between 58th and 59th of Chaos
-	if isLeapYear(d.Year()) && yearDay > 58 {
+	if isLeapYear(d.Year()) && yearDay >= 60 {
 		yearDay--
 	}
 
 	// get the day number and season
-	season, dayOfSeason, day := "", 0, ""
+	season, day, dayOfSeason, dayOfWeek := "", "", 0, 0
 	for name, days := range seasons {
 		if yearDay >= days.first && yearDay <= days.last {
 			season = name
 			dayOfSeason = (yearDay - days.first) + 1
+			dayOfWeek = (dayOfSeason - 1) % 5
 			break
 		}
 	}
@@ -45,19 +50,19 @@ func New(d time.Time) Date {
 	case 50:
 		day = seasons[season].seasonDay
 	default:
-		day = days[dayOfSeason%5]
+		day = days[dayOfWeek]
 	}
 
 	// Implement St Tibbs Day on Feb 29th
 	if d.Month() == 2 && d.Day() == 29 {
-		day = "St Tib's Day"
+		day = stTibsDay
 	}
 
 	return Date{
 		Year:        (d.Year() - 1970) + 3136,
 		Season:      season,
 		DayOfSeason: dayOfSeason,
-		DayOfWeek:   dayOfSeason % 5,
+		DayOfWeek:   dayOfWeek,
 		Day:         day,
 	}
 }
@@ -75,15 +80,26 @@ type seasonData struct {
 	seasonDay  string
 }
 
-var seasons = map[string]seasonData{
-	"Chaos":         {1, 73, "MungDay", "Chaoflux"},
-	"Discord":       {74, 146, "Mojoday", "Discoflux"},
-	"Confusion":     {147, 219, "Syaday", "Confuflux"},
-	"Bureaucracy":   {220, 292, "Zaraday", "Bureflux"},
-	"The Aftermath": {293, 365, "Maladay", "Afflux"},
-}
+var (
+	seasons = map[string]seasonData{
+		ssnChaos:       {1, 73, "MungDay", "Chaoflux"},
+		ssnDiscord:     {74, 146, "Mojoday", "Discoflux"},
+		ssnConfusion:   {147, 219, "Syaday", "Confuflux"},
+		ssnBureaucracy: {220, 292, "Zaraday", "Bureflux"},
+		ssnAftermath:   {293, 365, "Maladay", "Afflux"},
+	}
+	days = []string{"Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange"}
+)
 
-var days = []string{"Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange"}
+// Constant names
+const (
+	stTibsDay      = "St Tib's Day"
+	ssnChaos       = "Chaos"
+	ssnDiscord     = "Discord"
+	ssnConfusion   = "Confusion"
+	ssnBureaucracy = "Bureaucracy"
+	ssnAftermath   = "The Aftermath"
+)
 
 func isLeapYear(year int) bool {
 	switch {
