@@ -108,7 +108,7 @@ func New(d time.Time) Date {
 		yearDay--
 	}
 
-	// get the day number and season
+	// Good lord this is all a bit fancy
 	season, day, dayOfSeason, dayOfWeek := "", "", 0, 0
 	for name, days := range seasons {
 		if yearDay >= days.first && yearDay <= days.last {
@@ -134,9 +134,10 @@ func New(d time.Time) Date {
 		day = days[dayOfWeek]
 	}
 
-	// it's St Tibbs Day on Feb 29th
+	// it's St Tibs Day on Feb 29th
 	if d.Month() == 2 && d.Day() == 29 {
 		day = stTibsDay
+		// St Tibs is very much outside of the normal rules of time and space
 		dayOfSeason = 0
 		dayOfWeek = 0
 	}
