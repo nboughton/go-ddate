@@ -7,18 +7,18 @@ import (
 	humanize "github.com/dustin/go-humanize"
 )
 
-// Constants
+// Constants, but is anything truly constant?
 const (
-	stTibsDay      = "St Tib's Day"
-	ssnChaos       = "Chaos"
-	ssnDiscord     = "Discord"
-	ssnConfusion   = "Confusion"
-	ssnBureaucracy = "Bureaucracy"
-	ssnAftermath   = "The Aftermath"
+	stTibsDay   = "St Tib's Day"
+	Chaos       = "Chaos"
+	Discord     = "Discord"
+	Confusion   = "Confusion"
+	Bureaucracy = "Bureaucracy"
+	Aftermath   = "The Aftermath"
 )
 
-// Internals used for calculating things
-type ssnInfo struct {
+// What's in a name?
+type attributes struct {
 	first      int
 	last       int
 	apostleDay string
@@ -26,12 +26,12 @@ type ssnInfo struct {
 }
 
 var (
-	seasons = map[string]ssnInfo{
-		ssnChaos:       {1, 73, "MungDay", "Chaoflux"},
-		ssnDiscord:     {74, 146, "Mojoday", "Discoflux"},
-		ssnConfusion:   {147, 219, "Syaday", "Confuflux"},
-		ssnBureaucracy: {220, 292, "Zaraday", "Bureflux"},
-		ssnAftermath:   {293, 365, "Maladay", "Afflux"},
+	seasons = map[string]attributes{
+		Chaos:       {1, 73, "MungDay", "Chaoflux"},
+		Discord:     {74, 146, "Mojoday", "Discoflux"},
+		Confusion:   {147, 219, "Syaday", "Confuflux"},
+		Bureaucracy: {220, 292, "Zaraday", "Bureflux"},
+		Aftermath:   {293, 365, "Maladay", "Afflux"},
 	}
 
 	days = map[int]string{
@@ -56,29 +56,54 @@ func isLeapYear(year int) bool {
 	}
 }
 
-// Date represents all the data relevant to a Discordian calender entry
+// Date represents a date (SHOCKING!)
 type Date struct {
-	Year        int
-	Season      string
-	Day         string
-	DayOfWeek   int
-	DayOfSeason int
+	year        int
+	season      string
+	day         string
+	dayOfWeek   int
+	dayOfSeason int
+}
+
+// Day returns the name of the current day
+func (d Date) Day() string {
+	return d.day
+}
+
+// DayOfWeek returns the number of the day of the week (1 - 5)
+func (d Date) DayOfWeek() int {
+	return d.dayOfWeek
+}
+
+// DayOfSeason returns the number of the day of the season (1 - 73)
+func (d Date) DayOfSeason() int {
+	return d.dayOfSeason
+}
+
+// Season returns the name of the Season
+func (d Date) Season() string {
+	return d.season
+}
+
+// Year returns the YOLD
+func (d Date) Year() int {
+	return d.year
 }
 
 // String implements the Stringer interface for Date structs
 func (d Date) String() string {
-	if d.Day == stTibsDay {
-		return fmt.Sprintf("%s, YOLD %d", d.Day, d.Year)
+	if d.day == stTibsDay {
+		return fmt.Sprintf("%s, YOLD %d", d.day, d.year)
 	}
 
-	return fmt.Sprintf("%s, %s day of %s in the YOLD %d", d.Day, humanize.Ordinal(d.DayOfSeason), d.Season, d.Year)
+	return fmt.Sprintf("%s, %s day of %s in the YOLD %d", d.day, humanize.Ordinal(d.dayOfSeason), d.season, d.year)
 }
 
 // New generates a discordian Date from d
 func New(d time.Time) Date {
 	yearDay := d.YearDay()
 
-	// There's an extra day added between 59th and 60th of Chaos on Leap years
+	// There's an extra day between 59th and 60th of Chaos on Leap years
 	if isLeapYear(d.Year()) && yearDay >= 60 {
 		yearDay--
 	}
@@ -99,7 +124,7 @@ func New(d time.Time) Date {
 		}
 	}
 
-	// Account for Holy Days
+	// We got Holy for Days yo
 	switch dayOfSeason {
 	case 5:
 		day = seasons[season].apostleDay
@@ -117,15 +142,15 @@ func New(d time.Time) Date {
 	}
 
 	return Date{
-		Year:        (d.Year() - 1970) + 3136,
-		Season:      season,
-		DayOfSeason: dayOfSeason,
-		DayOfWeek:   dayOfWeek,
-		Day:         day,
+		year:        (d.Year() - 1970) + 3136, // "What year is it?!"
+		season:      season,
+		dayOfSeason: dayOfSeason,
+		dayOfWeek:   dayOfWeek,
+		day:         day,
 	}
 }
 
-// Today returns Today's date in the discordian calendar
+// Today returns Today
 func Today() Date {
 	return New(time.Now())
 }
