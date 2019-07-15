@@ -127,9 +127,9 @@ func New(d time.Time) Date {
 	// We got Holy for Days yo
 	switch dayOfSeason {
 	case 5:
-		day = seasons[season].apostleDay
+		day = fmt.Sprintf("%s and %s!", days[dayOfWeek], seasons[season].apostleDay)
 	case 50:
-		day = seasons[season].seasonDay
+		day = fmt.Sprintf("%s and %s!", days[dayOfWeek], seasons[season].seasonDay)
 	default:
 		day = days[dayOfWeek]
 	}
